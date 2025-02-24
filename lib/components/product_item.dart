@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/models/product.dart';
+import 'package:shop/utils/app_routes.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;
@@ -13,17 +14,31 @@ class ProductItem extends StatelessWidget {
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(onPressed: () {}, icon: Icon(Icons.favorite)),
+          leading: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.favorite),
+            color: Theme.of(context).colorScheme.secondary,
+          ),
           title: Text(
             product.title,
             textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
-          trailing:
-              IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
+          trailing: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.shopping_cart),
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
-        child: Image.network(
-          product.imageUrl,
-          fit: BoxFit.cover,
+        child: GestureDetector(
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
+          ),
+          onTap: () {
+            Navigator.of(context)
+                .pushNamed(AppRoutes.PRODUCT_DETAIL, arguments: product);
+          },
         ),
       ),
     );
