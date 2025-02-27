@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/components/marker.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/models/cart.dart';
+import 'package:shop/utils/app_routes.dart';
 
 enum FilterOptions {
   favorite,
@@ -25,8 +26,11 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
         title: Text('Minha Loja'),
         actions: [
           Consumer<Cart>(
-            child:
-                IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.CART_PAGE);
+                },
+                icon: Icon(Icons.shopping_cart)),
             builder: (ctx, cart, child) =>
                 Marker(value: cart.itemsCount.toString(), child: child!),
           ),
