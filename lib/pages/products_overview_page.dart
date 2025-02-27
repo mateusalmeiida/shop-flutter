@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/components/marker.dart';
 import 'package:shop/components/product_grid.dart';
+import 'package:shop/models/cart.dart';
 
 enum FilterOptions {
   favorite,
@@ -21,6 +24,12 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       appBar: AppBar(
         title: Text('Minha Loja'),
         actions: [
+          Consumer<Cart>(
+            child:
+                IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
+            builder: (ctx, cart, child) =>
+                Marker(value: cart.itemsCount.toString(), child: child!),
+          ),
           PopupMenuButton(
             itemBuilder: (_) {
               return [
@@ -38,7 +47,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
                 }
               });
             },
-          )
+          ),
         ],
       ),
       body: ProductGrid(
