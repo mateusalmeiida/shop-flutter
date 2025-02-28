@@ -19,6 +19,7 @@ class CartPage extends StatelessWidget {
       body: Column(
         children: [
           Card(
+            elevation: 1,
             margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             child: Padding(
               padding: const EdgeInsets.all(10),
@@ -26,7 +27,7 @@ class CartPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total',
+                    'Total:',
                     style: TextStyle(fontSize: 20),
                   ),
                   SizedBox(width: 10),
