@@ -31,6 +31,7 @@ class ShopApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.white,
                 primary: Colors.deepPurple,
+                onPrimary: Colors.white,
                 secondary: Colors.deepOrange),
             appBarTheme: AppBarTheme(
               centerTitle: true,
