@@ -7,6 +7,7 @@ import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/order_page.dart';
 import 'package:shop/pages/product_detail_page.dart';
 import 'package:shop/pages/products_overview_page.dart';
+import 'package:shop/pages/products_page.dart';
 import 'package:shop/utils/app_routes.dart';
 
 void main() {
@@ -60,6 +61,9 @@ class ShopApp extends StatelessWidget {
           },
           AppRoutes.ORDERS: (ctx) {
             return OrderPage();
+          },
+          AppRoutes.PRODUCTS: (ctx) {
+            return ProductsPage();
           }
         },
       ),
