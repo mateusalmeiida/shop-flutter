@@ -33,10 +33,12 @@ class ProductGridItem extends StatelessWidget {
           ),
           trailing: IconButton(
             onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Produto Adicionado com Sucesso'),
+                content: Text('Produto adicionado com sucesso'),
                 duration: Duration(seconds: 2),
                 action: SnackBarAction(
+                    textColor: Theme.of(context).colorScheme.secondary,
                     label: 'DESFAZER',
                     onPressed: () {
                       cart.removeSingleItem(product.id);
