@@ -33,7 +33,19 @@ class _ProductFormPageState extends State<ProductFormPage> {
     setState(() {});
   }
 
+  bool isValidImageUrl(String url) {
+    bool isValidUrl = Uri.tryParse(url)?.hasAbsolutePath ?? false;
+    bool endsWithFile = url.toLowerCase().endsWith('.png') ||
+        url.toLowerCase().endsWith('.jpg') ||
+        url.toLowerCase().endsWith('.jpeg');
+    return isValidUrl && endsWithFile;
+  }
+
   void _submitForm() {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) {
+      return;
+    }
     _formKey.currentState?.save();
     final newProduct = Product(
         id: Random().nextDouble().toString(),
@@ -57,6 +69,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
       body: Form(
           key: _formKey,
           child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 5),
             children: [
               TextFormField(
                 decoration: InputDecoration(labelText: 'Nome'),
@@ -64,14 +77,32 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 onSaved: (name) {
                   _formData['name'] = name ?? '';
                 },
+                validator: (_name) {
+                  final name = _name ?? '';
+
+                  if (name.trim().isEmpty) {
+                    return 'O nome é obrigatório';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
-                  decoration: InputDecoration(labelText: 'Preço'),
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  onSaved: (price) {
-                    _formData['price'] = double.parse(price ?? '0');
-                  }),
+                decoration: InputDecoration(labelText: 'Preço'),
+                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                onSaved: (price) {
+                  _formData['price'] = double.parse(price ?? '0');
+                },
+                validator: (_price) {
+                  final priceString = _price ?? '-1';
+                  final price = double.tryParse(priceString) ?? -1;
+
+                  if (price <= 0) {
+                    return 'Informe um preço válido';
+                  }
+                  return null;
+                },
+              ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Descrição'),
                 textInputAction: TextInputAction.next,
@@ -79,6 +110,14 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 maxLines: 3,
                 onSaved: (description) {
                   _formData['description'] = description ?? '';
+                },
+                validator: (_description) {
+                  final description = _description ?? '';
+
+                  if (description.trim().length < 15) {
+                    return 'A descrição precisa ter pelo menos 15 caracteres';
+                  }
+                  return null;
                 },
               ),
               Row(
@@ -94,13 +133,20 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       onSaved: (url) {
                         _formData['url'] = url ?? '';
                       },
+                      validator: (_url) {
+                        final url = _url ?? '';
+                        if (!isValidImageUrl(url)) {
+                          return 'URL Inválida';
+                        }
+                        return null;
+                      },
                       onFieldSubmitted: (_) {
                         _submitForm();
                       },
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 3, 0),
+                    margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
