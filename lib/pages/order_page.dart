@@ -4,8 +4,28 @@ import 'package:shop/components/app_drawer.dart';
 import 'package:shop/components/order_widget.dart';
 import 'package:shop/models/order_list.dart';
 
-class OrderPage extends StatelessWidget {
+class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
+
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  bool _isLoading = true;
+  Future<void> _refreshOrder(BuildContext context) {
+    return Provider.of<OrderList>(context, listen: false).loadOrders();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<OrderList>(context, listen: false).loadOrders().then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +35,20 @@ class OrderPage extends StatelessWidget {
         title: Text('Meus Pedidos'),
       ),
       drawer: AppDrawer(),
-      body: ListView.builder(
-          itemCount: orders.itemsCount,
-          itemBuilder: (ctx, index) {
-            return OrderWidget(order: orders.items[index]);
-          }),
+      body: RefreshIndicator(
+        onRefresh: () {
+          return _refreshOrder(context);
+        },
+        child: _isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                itemCount: orders.itemsCount,
+                itemBuilder: (ctx, index) {
+                  return OrderWidget(order: orders.items[index]);
+                }),
+      ),
     );
   }
 }
