@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/models/auth.dart';
 
-enum AuthMode { singup, login }
+enum AuthMode { signUp, login }
 
 class AuthForm extends StatefulWidget {
   const AuthForm({super.key});
@@ -13,7 +15,7 @@ class _AuthFormState extends State<AuthForm> {
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final _passwordControler = TextEditingController();
-  AuthMode _authMode = AuthMode.singup;
+  AuthMode _authMode = AuthMode.login;
   final Map<String, String> _authData = {
     'email': '',
     'password': '',
@@ -23,17 +25,17 @@ class _AuthFormState extends State<AuthForm> {
     return _authMode == AuthMode.login;
   }
 
-  bool _isSingup() {
-    return _authMode == AuthMode.singup;
+  bool _isSignUp() {
+    return _authMode == AuthMode.signUp;
   }
 
   void _switchAuthMode() {
     setState(() {
-      _isLogin() ? _authMode = AuthMode.singup : _authMode = AuthMode.login;
+      _isLogin() ? _authMode = AuthMode.signUp : _authMode = AuthMode.login;
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final bool isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
@@ -45,8 +47,12 @@ class _AuthFormState extends State<AuthForm> {
     });
 
     _formKey.currentState?.save();
+    Auth auth = Provider.of<Auth>(context, listen: false);
     if (_isLogin()) {
-    } else {}
+      await auth.login(_authData['email']!, _authData['password']!);
+    } else {
+      await auth.signup(_authData['email']!, _authData['password']!);
+    }
 
     setState(() {
       _isLoading = false;
@@ -88,7 +94,7 @@ class _AuthFormState extends State<AuthForm> {
                 controller: _passwordControler,
                 validator: (password) {
                   final storedPassword = password ?? '';
-                  if (storedPassword.isEmpty || storedPassword.length < 5) {
+                  if (storedPassword.isEmpty || storedPassword.length < 6) {
                     return 'Informe uma senha válida';
                   }
                   return null;
@@ -97,7 +103,7 @@ class _AuthFormState extends State<AuthForm> {
                   _authData['password'] = password ?? '';
                 },
               ),
-              if (_isSingup())
+              if (_isSignUp())
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Confirmar Senha'),
                   obscureText: true,
