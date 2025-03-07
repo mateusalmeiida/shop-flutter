@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/models/cart.dart';
 import 'package:shop/models/order_list.dart';
 import 'package:shop/models/product_list.dart';
+import 'package:shop/pages/auth_page.dart';
 import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/order_page.dart';
 import 'package:shop/pages/product_detail_page.dart';
@@ -51,6 +52,9 @@ class ShopApp extends StatelessWidget {
         title: 'Minha Loja',
         debugShowCheckedModeBanner: false,
         routes: {
+          AppRoutes.AUTH: (ctx) {
+            return AuthPage();
+          },
           AppRoutes.HOME: (ctx) {
             return ProductsOverviewPage();
           },
