@@ -8,11 +8,14 @@ import 'package:shop/models/product.dart';
 import 'package:shop/utils/constants.dart';
 
 class ProductList with ChangeNotifier {
-  final List<Product> _items = [];
+  String token;
+  final List<Product> _items;
 
   List<Product> get items {
     return [..._items];
   }
+
+  ProductList(this.token, this._items);
 
   List<Product> get favoriteItems {
     return [
@@ -71,7 +74,8 @@ class ProductList with ChangeNotifier {
 
   Future<void> loadProducts() async {
     _items.clear();
-    final response = await get(Uri.parse('${Constants.PRODUCT_BASE_URL}.json'));
+    final response =
+        await get(Uri.parse('${Constants.PRODUCT_BASE_URL}.json?auth=$token'));
     if (response.body == 'null') {
       return;
     }
