@@ -27,7 +27,7 @@ class ProductList with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final response = await post(
-      Uri.parse('${Constants.PRODUCT_BASE_URL}.json'),
+      Uri.parse('${Constants.PRODUCT_BASE_URL}.json?auth=$token'),
       body: jsonEncode(
         {
           'name': product.name,
@@ -59,8 +59,8 @@ class ProductList with ChangeNotifier {
       _items.remove(product);
       notifyListeners();
 
-      final response = await delete(
-          Uri.parse('${Constants.PRODUCT_BASE_URL}/${product.id}.json'));
+      final response = await delete(Uri.parse(
+          '${Constants.PRODUCT_BASE_URL}/${product.id}.json?auth=$token'));
 
       if (response.statusCode >= 400) {
         _items.insert(index, product);
@@ -115,7 +115,8 @@ class ProductList with ChangeNotifier {
 
     if (index >= 0) {
       await patch(
-        Uri.parse('${Constants.PRODUCT_BASE_URL}/${product.id}.json'),
+        Uri.parse(
+            '${Constants.PRODUCT_BASE_URL}/${product.id}.json?auth=$token'),
         body: jsonEncode(
           {
             'name': product.name,

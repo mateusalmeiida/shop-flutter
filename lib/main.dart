@@ -37,9 +37,14 @@ class ShopApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) {
           return Cart();
         }),
-        ChangeNotifierProvider(create: (_) {
-          return OrderList();
-        }),
+        ChangeNotifierProxyProvider<Auth, OrderList>(
+          create: (_) {
+            return OrderList('', []);
+          },
+          update: (ctx, auth, previous) {
+            return OrderList(auth.token ?? '', previous?.items ?? []);
+          },
+        ),
       ],
       child: MaterialApp(
         theme: ThemeData(
