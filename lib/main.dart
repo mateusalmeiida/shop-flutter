@@ -28,10 +28,11 @@ class ShopApp extends StatelessWidget {
         }),
         ChangeNotifierProxyProvider<Auth, ProductList>(
           create: (_) {
-            return ProductList('', []);
+            return ProductList();
           },
           update: (ctx, auth, previous) {
-            return ProductList(auth.token ?? '', previous?.items ?? []);
+            return ProductList(
+                auth.token ?? '', previous?.items ?? [], auth.userId ?? '');
           },
         ),
         ChangeNotifierProvider(create: (_) {
@@ -39,7 +40,7 @@ class ShopApp extends StatelessWidget {
         }),
         ChangeNotifierProxyProvider<Auth, OrderList>(
           create: (_) {
-            return OrderList('', []);
+            return OrderList();
           },
           update: (ctx, auth, previous) {
             return OrderList(auth.token ?? '', previous?.items ?? []);

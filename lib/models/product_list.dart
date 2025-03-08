@@ -9,13 +9,14 @@ import 'package:shop/utils/constants.dart';
 
 class ProductList with ChangeNotifier {
   String token;
+  String userId;
   final List<Product> _items;
 
   List<Product> get items {
     return [..._items];
   }
 
-  ProductList(this.token, this._items);
+  ProductList([this.token = '', this._items = const [], this.userId = '']);
 
   List<Product> get favoriteItems {
     return [
@@ -79,15 +80,27 @@ class ProductList with ChangeNotifier {
     if (response.body == 'null') {
       return;
     }
+
+    final favResponse = await get(
+      Uri.parse('${Constants.USER_FAVORITES_URL}/$userId.json?auth=$token'),
+    );
+
+    Map<String, dynamic> favData =
+        favResponse.body == 'null' ? {} : jsonDecode(favResponse.body);
+
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((productId, productData) {
-      _items.add(Product(
+      final bool isFavorite = favData[productId] ?? false;
+      _items.add(
+        Product(
           id: productId,
           name: productData['name'],
           description: productData['description'],
           price: productData['price'],
           imageUrl: productData['imageUrl'],
-          isFavorite: productData['isFavorite']));
+          isFavorite: isFavorite,
+        ),
+      );
     });
     notifyListeners();
   }

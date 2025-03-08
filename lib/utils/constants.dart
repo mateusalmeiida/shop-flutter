@@ -4,4 +4,7 @@ class Constants {
 
   static const ORDER_BASE_URL =
       'https://shop-flutter-74e45-default-rtdb.firebaseio.com/orders';
+
+  static const USER_FAVORITES_URL =
+      'https://shop-flutter-74e45-default-rtdb.firebaseio.com/userFavorites';
 }
