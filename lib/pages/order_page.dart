@@ -43,11 +43,31 @@ class _OrderPageState extends State<OrderPage> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView.builder(
-                itemCount: orders.itemsCount,
-                itemBuilder: (ctx, index) {
-                  return OrderWidget(order: orders.items[index]);
-                }),
+            : orders.itemsCount == 0
+                ? Center(
+                    child: ListView(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height -
+                              kToolbarHeight -
+                              MediaQuery.of(context).padding.top,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Você não tem pedidos no histórico',
+                            style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 16,
+                                color: Colors.black45),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: orders.itemsCount,
+                    itemBuilder: (ctx, index) {
+                      return OrderWidget(order: orders.items[index]);
+                    }),
       ),
     );
   }

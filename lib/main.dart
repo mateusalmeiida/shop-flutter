@@ -43,7 +43,8 @@ class ShopApp extends StatelessWidget {
             return OrderList();
           },
           update: (ctx, auth, previous) {
-            return OrderList(auth.token ?? '', previous?.items ?? []);
+            return OrderList(
+                auth.token ?? '', previous?.items ?? [], auth.userId ?? '');
           },
         ),
       ],
