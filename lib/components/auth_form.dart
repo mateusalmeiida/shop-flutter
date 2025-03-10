@@ -30,7 +30,7 @@ class _AuthFormState extends State<AuthForm>
   void initState() {
     super.initState();
     _controller =
-        AnimationController(vsync: this, duration: Duration(microseconds: 150));
+        AnimationController(vsync: this, duration: Duration(microseconds: 200));
 
     _opacityAnimation = Tween(begin: 0.0, end: 1.0)
         .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
@@ -123,7 +123,7 @@ class _AuthFormState extends State<AuthForm>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 8,
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 150),
+          duration: Duration(milliseconds: 200),
           curve: Curves.linear,
           padding: const EdgeInsets.all(16),
           height: _isLogin() ? 310 : 400,
@@ -158,9 +158,6 @@ class _AuthFormState extends State<AuthForm>
                     }
                     return null;
                   },
-                  onFieldSubmitted: (_) {
-                    _submit();
-                  },
                   onSaved: (password) {
                     _authData['password'] = password ?? '';
                   },
@@ -169,7 +166,7 @@ class _AuthFormState extends State<AuthForm>
                   constraints: BoxConstraints(
                       minHeight: _isLogin() ? 0 : 100,
                       maxHeight: _isLogin() ? 0 : 100),
-                  duration: Duration(milliseconds: 150),
+                  duration: Duration(milliseconds: 200),
                   curve: Curves.linear,
                   child: FadeTransition(
                     opacity: _opacityAnimation!,

@@ -33,7 +33,9 @@ class ProductGridItem extends StatelessWidget {
                 }
               },
               icon: Icon(
-                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+                product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                size: 18,
+              ),
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
@@ -57,15 +59,18 @@ class ProductGridItem extends StatelessWidget {
               ));
               cart.addItem(product);
             },
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(
+              Icons.shopping_cart,
+              size: 18,
+            ),
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
         child: GestureDetector(
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
-          ),
+          child: FadeInImage(
+              fit: BoxFit.cover,
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl)),
           onTap: () {
             Navigator.of(context)
                 .pushNamed(AppRoutes.PRODUCT_DETAIL, arguments: product);

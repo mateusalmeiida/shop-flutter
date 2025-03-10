@@ -17,8 +17,14 @@ class ProductGrid extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         itemCount: loadedProducts.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 3 / 2,
+            crossAxisCount:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? 2
+                    : 3,
+            childAspectRatio:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? 1
+                    : 1.5,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
         itemBuilder: (ctx, index) {

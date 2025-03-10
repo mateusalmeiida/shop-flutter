@@ -23,10 +23,10 @@ class AuthPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: Center(
-              child: SingleChildScrollView(
+          Center(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
                 child: Column(
                   children: [
                     Container(
