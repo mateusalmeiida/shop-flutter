@@ -12,7 +12,8 @@ class AuthForm extends StatefulWidget {
   State<AuthForm> createState() => _AuthFormState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormState extends State<AuthForm>
+    with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final _passwordControler = TextEditingController();
@@ -22,17 +23,46 @@ class _AuthFormState extends State<AuthForm> {
     'password': '',
   };
 
+  AnimationController? _controller;
+  Animation<double>? _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: Duration(microseconds: 150));
+
+    _opacityAnimation = Tween(begin: 0.0, end: 1.0)
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
+
+    _opacityAnimation?.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
+  }
+
   bool _isLogin() {
     return _authMode == AuthMode.login;
   }
 
-  bool _isSignUp() {
+  /*bool _isSignUp() {
     return _authMode == AuthMode.signUp;
-  }
+  }*/
 
   void _switchAuthMode() {
     setState(() {
-      _isLogin() ? _authMode = AuthMode.signUp : _authMode = AuthMode.login;
+      if (_isLogin()) {
+        _authMode = AuthMode.signUp;
+        _controller?.forward();
+      } else {
+        _authMode = AuthMode.login;
+        _controller?.reverse();
+      }
     });
   }
 
@@ -90,85 +120,101 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 8,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        height: _isLogin() ? 310 : 400,
-        width: deviceSize.width * 0.75,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'E-mail'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (email) {
-                  final storedEmail = email ?? '';
-                  if (storedEmail.trim().isEmpty ||
-                      !storedEmail.contains('@')) {
-                    return 'Informe um e-mail válido';
-                  }
-                  return null;
-                },
-                onSaved: (email) {
-                  _authData['email'] = email ?? '';
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Senha'),
-                obscureText: true,
-                controller: _passwordControler,
-                validator: (password) {
-                  final storedPassword = password ?? '';
-                  if (storedPassword.isEmpty || storedPassword.length < 6) {
-                    return 'Informe uma senha válida';
-                  }
-                  return null;
-                },
-                onSaved: (password) {
-                  _authData['password'] = password ?? '';
-                },
-              ),
-              if (_isSignUp())
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: 8,
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 150),
+          curve: Curves.linear,
+          padding: const EdgeInsets.all(16),
+          height: _isLogin() ? 310 : 400,
+          width: deviceSize.width * 0.75,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Confirmar Senha'),
-                  obscureText: true,
-                  validator: _isLogin()
-                      ? null
-                      : (passwordConfirmed) {
-                          final password = passwordConfirmed ?? '';
-                          if (password != _passwordControler.text) {
-                            return 'Senhas informadas não conferem';
-                          }
-                          return null;
-                        },
+                  decoration: InputDecoration(labelText: 'E-mail'),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (email) {
+                    final storedEmail = email ?? '';
+                    if (storedEmail.trim().isEmpty ||
+                        !storedEmail.contains('@')) {
+                      return 'Informe um e-mail válido';
+                    }
+                    return null;
+                  },
+                  onSaved: (email) {
+                    _authData['email'] = email ?? '';
+                  },
                 ),
-              SizedBox(height: 20),
-              _isLoading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _submit,
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      child: Text(
-                          _authMode == AuthMode.login ? 'ENTRAR' : 'REGISTRAR'),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Senha'),
+                  obscureText: true,
+                  controller: _passwordControler,
+                  validator: (password) {
+                    final storedPassword = password ?? '';
+                    if (storedPassword.isEmpty || storedPassword.length < 6) {
+                      return 'Informe uma senha válida';
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (_) {
+                    _submit();
+                  },
+                  onSaved: (password) {
+                    _authData['password'] = password ?? '';
+                  },
+                ),
+                AnimatedContainer(
+                  constraints: BoxConstraints(
+                      minHeight: _isLogin() ? 0 : 100,
+                      maxHeight: _isLogin() ? 0 : 100),
+                  duration: Duration(milliseconds: 150),
+                  curve: Curves.linear,
+                  child: FadeTransition(
+                    opacity: _opacityAnimation!,
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: 'Confirmar Senha'),
+                      obscureText: true,
+                      validator: _isLogin()
+                          ? null
+                          : (passwordConfirmed) {
+                              final password = passwordConfirmed ?? '';
+                              if (password != _passwordControler.text) {
+                                return 'Senhas informadas não conferem';
+                              }
+                              return null;
+                            },
                     ),
-              Spacer(),
-              TextButton(
-                  onPressed: _switchAuthMode,
-                  child: Text(
-                      _isLogin() ? 'Deseja se Registrar?' : 'Já possui conta?'))
-            ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                _isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _submit,
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        child: Text(_authMode == AuthMode.login
+                            ? 'ENTRAR'
+                            : 'REGISTRAR'),
+                      ),
+                Spacer(),
+                TextButton(
+                    onPressed: _switchAuthMode,
+                    child: Text(_isLogin()
+                        ? 'Deseja se Registrar?'
+                        : 'Já possui conta?'))
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
