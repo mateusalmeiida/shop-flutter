@@ -11,6 +11,7 @@ import 'package:shop/pages/product_detail_page.dart';
 import 'package:shop/pages/product_form_page.dart';
 import 'package:shop/pages/products_page.dart';
 import 'package:shop/utils/app_routes.dart';
+import 'package:shop/utils/custom_route.dart';
 
 void main() {
   runApp(ShopApp());
@@ -50,6 +51,9 @@ class ShopApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+              TargetPlatform.android: CustomPageTransitionsBuilder()
+            }),
             fontFamily: 'Lato',
             colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.white,
